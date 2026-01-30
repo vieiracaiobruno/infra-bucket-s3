@@ -3,7 +3,7 @@
 
 # REQUIRED: S3 bucket name must be globally unique across all AWS accounts
 # Consider using a pattern like: <org>-<project>-<env>-<random>
-bucket_name = "infra-bucket-s3"
+bucket_name = "vcb-infra-bucket-s3"
 
 # AWS Region
 aws_region = "us-east-1"
