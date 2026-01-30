@@ -19,11 +19,22 @@ Este projeto provisiona um bucket S3 na AWS chamado `bolsa-de-valores` com as se
 
 ## Configuração
 
+### Pré-requisitos
+
+1. **Bucket Name Único**: S3 bucket names devem ser globalmente únicos. Crie um nome único antes de executar:
+   - Formato recomendado: `<org>-bolsa-de-valores-<ambiente>-<random>`
+   - Exemplo: `mycompany-bolsa-de-valores-prod-a1b2c3`
+
+2. **Credenciais AWS**: Configure via GitHub Secrets ou AWS CLI
+
 ### Variáveis
 
-As variáveis podem ser personalizadas em `variables.tf`:
+Configure as variáveis antes do deploy:
 
-- `bucket_name`: Nome do bucket (padrão: "bolsa-de-valores")
+**Variáveis Obrigatórias:**
+- `bucket_name`: Nome ÚNICO do bucket S3 (não tem padrão, deve ser especificado)
+
+**Variáveis Opcionais:**
 - `aws_region`: Região AWS (padrão: "us-east-1")
 - `environment`: Ambiente (padrão: "prod")
 - `enable_versioning`: Habilitar versionamento (padrão: true)
@@ -47,6 +58,14 @@ O workflow `.github/workflows/terraform-deploy.yml` executa automaticamente:
    - `AWS_ACCESS_KEY_ID`
    - `AWS_SECRET_ACCESS_KEY`
 
+2. Configure o bucket name via GitHub Variables ou arquivo tfvars:
+   - Vá em Settings → Secrets and variables → Actions → Variables
+   - Adicione `TF_VAR_bucket_name` com valor único (ex: `mycompany-bolsa-de-valores-prod-xyz123`)
+
+3. Execute o workflow (push para main ou manual via workflow_dispatch)
+
+**⚠️ Atenção**: Este método é ideal para o deploy inicial. Para gerenciamento contínuo, recomenda-se usar backend remoto ou executar localmente.
+
 ### Deploy Manual
 
 ```bash
@@ -62,9 +81,44 @@ terraform apply
 
 ## Backend do Terraform
 
-Este projeto utiliza **backend local** para armazenar o estado do Terraform. Isso permite que o Terraform inicialize sem depender de um bucket S3 pré-existente, resolvendo o problema de "chicken-and-egg".
+Este projeto utiliza **backend local** para armazenar o estado do Terraform. 
 
-### Migrando para Backend S3 (Opcional)
+### ⚠️ Importante: Limitações do Backend Local com GitHub Actions
+
+O backend local é adequado para:
+- **Deploy inicial único via GitHub Actions**
+- **Desenvolvimento e testes locais**
+- **Ambientes de demonstração**
+
+**Limitação**: O estado não persiste entre execuções do workflow no GitHub Actions. Isso significa:
+- ✅ O primeiro deploy via GitHub Actions funcionará corretamente
+- ❌ Execuções subsequentes falharão pois o estado é perdido
+- ✅ Para uso contínuo, migre para um backend remoto (veja abaixo)
+
+### Uso Recomendado
+
+**Opção 1: Deploy Único via GitHub Actions**
+1. Configure as credenciais AWS nos GitHub Secrets
+2. Execute o workflow uma vez para criar o bucket
+3. Gerencie mudanças futuras localmente ou migre para backend remoto
+
+**Opção 2: Desenvolvimento Local**
+```bash
+# Clone o repositório
+git clone https://github.com/vieiracaiobruno/infra-bucket-s3.git
+cd infra-bucket-s3
+
+# Configure variáveis
+cp terraform.tfvars.example terraform.tfvars
+# Edite terraform.tfvars com seu bucket name único
+
+# Execute Terraform localmente
+terraform init
+terraform plan
+terraform apply
+```
+
+### Migrando para Backend S3 (Recomendado para Produção)
 
 Para ambientes de produção, você pode migrar para um backend S3 após a criação inicial:
 

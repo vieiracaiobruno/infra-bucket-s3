@@ -18,6 +18,9 @@ jobs:
     name: Terraform Plan and Apply
     runs-on: ubuntu-latest
     
+    env:
+      TF_VAR_bucket_name: ${{ vars.TF_VAR_bucket_name || 'bolsa-de-valores-demo' }}
+    
     defaults:
       run:
         working-directory: .
@@ -89,5 +92,5 @@ jobs:
         run: exit 1
       
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.plan.outcome == 'success'
         run: terraform apply -auto-approve -input=false

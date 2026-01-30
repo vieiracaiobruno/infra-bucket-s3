@@ -1,7 +1,6 @@
 variable "bucket_name" {
-  description = "Nome do bucket S3"
+  description = "Nome do bucket S3 (deve ser globalmente único)"
   type        = string
-  default     = "bolsa-de-valores"
 }
 
 variable "aws_region" {
