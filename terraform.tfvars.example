@@ -9,3 +9,5 @@ bucket_name = "your-org-bolsa-de-valores-prod-12345"
 # aws_region = "us-east-1"
 # environment = "prod"
 # enable_versioning = true
+
+# Note: To enable prevent_destroy protection, uncomment the lifecycle block in main.tf

@@ -7,9 +7,10 @@ resource "aws_s3_bucket" "main" {
     ManagedBy   = "Terraform"
   }
 
-  lifecycle {
-    prevent_destroy = true
-  }
+  # Uncomment to prevent accidental deletion via terraform destroy
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 resource "aws_s3_bucket_versioning" "main" {

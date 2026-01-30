@@ -1,10 +1,10 @@
 # infra-bucket-s3
 
-Infraestrutura Terraform para criação de bucket S3 na AWS.
+Terraform infrastructure for creating an S3 bucket on AWS.
 
-## Descrição
+## Description
 
-Este projeto provisiona um bucket S3 na AWS chamado `bolsa-de-valores` com as seguintes características:
+This project provisions a configurable S3 bucket on AWS with the following features:
 
 - **Criptografia**: AES256 habilitada por padrão
 - **Versionamento**: Habilitado (configurável via variável)
