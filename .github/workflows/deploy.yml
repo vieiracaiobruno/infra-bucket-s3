@@ -1,0 +1,22 @@
+name: Deploy Infrastructure
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: Deploy S3 Bucket
+    uses: vieiracaiobruno/github-workflows/.github/workflows/terraform-infra-deploy.yml@main
+    with:
+      terraform_version: '1.6.0'
+      aws_region: ${{ vars.AWS_REGION }}
+      working_directory: '.'
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
