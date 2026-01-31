@@ -12,7 +12,7 @@ on:
 jobs:
   terraform:
     name: Deploy S3 Bucket
-    uses: vieiracaiobruno/vcb-do-brasil/github-workflows/.github/workflows/terraform-infra-deploy.yml@main
+    uses: vcb-do-brasil/github-workflows/.github/workflows/terraform-infra-deploy.yml@main
     with:
       terraform_version: '1.6.0'
       aws_region: ${{ vars.AWS_REGION }}
