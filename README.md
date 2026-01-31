@@ -9,6 +9,7 @@ This project provisions a configurable S3 bucket on AWS with the following featu
 - **Criptografia**: AES256 habilitada por padrão
 - **Versionamento**: Habilitado (configurável via variável)
 - **Acesso Público**: Bloqueado em todos os níveis
+- **Lifecycle Policy**: Expiração automática de objetos após 5 dias
 - **Tags**: Ambiente, nome e gerenciamento via Terraform
 
 ## Requisitos
@@ -58,9 +59,9 @@ O workflow `.github/workflows/terraform-deploy.yml` executa automaticamente:
    - `AWS_ACCESS_KEY_ID`
    - `AWS_SECRET_ACCESS_KEY`
 
-2. Configure o bucket name via GitHub Variables ou arquivo tfvars:
-   - Vá em Settings → Secrets and variables → Actions → Variables
-   - Adicione `TF_VAR_bucket_name` com valor único (ex: `mycompany-bolsa-de-valores-prod-xyz123`)
+2. Configure o bucket name no arquivo `terraform.tfvars`:
+   - O bucket name já está definido no arquivo (`vcb-infra-bucket-s3`)
+   - Altere conforme necessário para um nome único
 
 3. Execute o workflow (push para main ou manual via workflow_dispatch)
 
@@ -78,6 +79,29 @@ terraform plan
 # Aplicar mudanças
 terraform apply
 ```
+
+### Importando Bucket Existente
+
+Se o bucket já existe na AWS, o Terraform detectará automaticamente e aplicará apenas as alterações necessárias:
+
+**Terraform 1.5+** (Automático):
+```bash
+terraform init
+terraform plan  # Detecta recursos existentes automaticamente
+terraform apply
+```
+
+**Terraform < 1.5** (Manual):
+```bash
+terraform import aws_s3_bucket.main <seu-bucket-name>
+terraform import aws_s3_bucket_versioning.main <seu-bucket-name>
+terraform import aws_s3_bucket_server_side_encryption_configuration.main <seu-bucket-name>
+terraform import aws_s3_bucket_public_access_block.main <seu-bucket-name>
+terraform plan
+terraform apply
+```
+
+Veja [IMPORT_INSTRUCTIONS.md](IMPORT_INSTRUCTIONS.md) para instruções detalhadas.
 
 ## Backend do Terraform
 
