@@ -46,11 +46,25 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init
-      
+
+      - name: Check if S3 bucket exists
+        id: bucket_check
+        run: |
+          BUCKET_NAME=$(grep 'bucket_name' terraform.tfvars | sed 's/.*= *"//' | sed 's/".*//')
+          echo "bucket_name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+          if aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
+            echo "Bucket '$BUCKET_NAME' existe — import será executado."
+            echo "bucket_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Bucket '$BUCKET_NAME' não existe — import.tf será ignorado para criação."
+            echo "bucket_exists=false" >> $GITHUB_OUTPUT
+            rm -f import.tf
+          fi
+
       - name: Terraform Validate
         id: validate
         run: terraform validate
-      
+
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color -input=false

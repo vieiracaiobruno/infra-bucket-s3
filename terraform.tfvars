@@ -2,7 +2,7 @@
 # Copy this to terraform.tfvars and customize with your values
 
 # Prefixo do bucket S3 — a AWS adiciona um sufixo único automaticamente
-bucket_name = "vcb-infra-bucket-s3-"
+bucket_name = "acoes-bolsa-"
 
 # AWS Region
 aws_region = "us-east-1"
